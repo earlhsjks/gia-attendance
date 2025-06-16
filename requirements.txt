@@ -1,6 +1,5 @@
 flask
-flask_sqlalchemy
+flask-sqlalchemy
 pandas
 waitress
-gunicorn
 mysql-connector-python

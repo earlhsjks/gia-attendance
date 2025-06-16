@@ -1,6 +1,12 @@
-MYSQL_CONFIG = {
-    'host': 'earlhsjks.mysql.pythonanywhere-services.com',
-    'user': 'earlhsjks',
-    'password': 'palao110905',
-    'database': 'earlhsjks$giaData'
-}
+DB_DIALECT = "mysql"
+DB_DRIVER = "mysqlconnector"
+DB_USERNAME = "root"
+DB_PASSWORD = ""
+DB_HOST = "localhost"
+DB_PORT = 3306
+DB_NAME = "gia_data"
+
+SQLALCHEMY_DATABASE_URI = (
+    f"{DB_DIALECT}+{DB_DRIVER}://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
+SQLALCHEMY_TRACK_MODIFICATIONS = False

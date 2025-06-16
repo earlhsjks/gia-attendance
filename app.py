@@ -151,8 +151,5 @@ def import_students_from_csv(csv_file):
 
 # Uncomment to import students on startup
 with app.app_context():
-    db.create_all()
-    # import_students_from_csv('students.csv')
-
-if __name__ == '__main__':
-    app.run(debug=False)
+    # db.create_all()
+    import_students_from_csv('students.csv')

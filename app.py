@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, jsonify, flash
+from flask import Flask, render_template, request, redirect, jsonify, flash, session, url_for
 from datetime import date
 from models import db, Event, Student, Attendance
 import csv
-from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS
+from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS, LOGIN_PIN
 from sqlalchemy import text
 from models import db, Event, Student, Attendance
+from functools import wraps
+import time
 
 app = Flask(__name__)
 app.secret_key = '81a6u3xft47odubrf431sqcg2wfeqnlbfh0nh1yucg'
@@ -12,7 +14,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 db.init_app(app)
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if logged in
+        if not session.get('logged_in'):
+            return redirect(url_for('login'))
+        # Check for inactivity (10 minutes = 600 seconds)
+        last_active = session.get('last_active')
+        now = time.time()
+        if last_active and now - last_active > 600:
+            session.clear()
+            return redirect(url_for('login'))
+        # Update last active time
+        session['last_active'] = now
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/')
+@login_required
 def index():
     events = Event.query.order_by(Event.date.desc()).all()
     event_id = request.args.get('event_id')
@@ -43,6 +63,7 @@ def index():
     )
 
 @app.route('/mark', methods=['POST'])
+@login_required
 def mark():
     student_id = request.form['student_id']
     event_id = request.form['event_id']
@@ -106,6 +127,7 @@ def mark():
         return redirect(f"/?event_id={event_id}")
 
 @app.route('/create_event', methods=['POST'])
+@login_required
 def create_event():
     name = request.form['event_name']
     date_str = request.form['event_date']
@@ -115,6 +137,7 @@ def create_event():
     return redirect('/')
 
 @app.route('/delete_event/<int:event_id>', methods=['POST'])
+@login_required
 def delete_event(event_id):
     Attendance.query.filter_by(event_id=event_id).delete()
     Event.query.filter_by(id=event_id).delete()
@@ -122,6 +145,7 @@ def delete_event(event_id):
     return redirect('/')
 
 @app.route('/edit_event/<int:event_id>', methods=['POST'])
+@login_required
 def edit_event(event_id):
     name = request.form['event_name']
     date_str = request.form['event_date']
@@ -152,6 +176,7 @@ def import_students_from_csv(csv_file):
     db.session.commit()
 
 @app.route('/upload', methods=['GET', 'POST'])
+@login_required
 def upload_students_csv():
     # Optional: Add simple IP or password check here for extra security
     if request.method == 'POST':
@@ -178,6 +203,27 @@ def upload_students_csv():
       <input type=submit value=Upload>
     </form>
     '''
+
+# In your app.py
+from flask import render_template
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        pin = request.form.get('pin')
+        if pin == LOGIN_PIN:
+            session['logged_in'] = True
+            session['last_active'] = time.time()
+            return redirect(url_for('index'))
+        else:
+            error = "Invalid PIN"
+    return render_template('auth.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 # Uncomment to import students on startup
 # with app.app_context():

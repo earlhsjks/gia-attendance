@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance - {{ today }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+    <div class="main-header text-center mb-4 shadow-sm">
+        <h1>GIA/Working Student</h1>
+        <h2>Attendance System</h2>
+    </div>
+    <div class="container mb-4 px-2" style="max-width: 700px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fs-5 mb-0">
+                Attendance for 
+                <strong>
+                    {% if selected_event %}
+                        {{ selected_event.name }}
+                    {% else %}
+                        {{ today }}
+                    {% endif %}
+                </strong>
+            </h3>
+            <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#eventModal" title="Manage Events">
+                <i class="bi bi-calendar3"></i>
+            </button>
+        </div>
+
+        <!-- Event Management Modal -->
+        <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel">Manage Events</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <!-- Select Event -->
+                <form method="get" action="/" class="mb-3">
+                  <label class="form-label">Select Event</label>
+                  <select name="event_id" class="form-select mb-2" onchange="this.form.submit()">
+                    <option value="">-- Select Event --</option>
+                    {% for event in events %}
+                      <option value="{{ event.id }}" {% if event_id and event.id == event_id|int %}selected{% endif %}>
+                        {{ event.name }} ({{ event.date }})
+                      </option>
+                    {% endfor %}
+                  </select>
+                </form>
+                <!-- Create Event -->
+                <form method="POST" action="/create_event" class="mb-3">
+                  <label class="form-label">Create Event</label>
+                  <div class="input-group mb-2">
+                    <input type="text" name="event_name" class="form-control" placeholder="Event Name" required>
+                    <input type="date" name="event_date" class="form-control" required>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i></button>
+                  </div>
+                </form>
+                {% if selected_event %}
+                <!-- Edit Event -->
+                <form method="POST" action="/edit_event/{{ selected_event.id }}" class="mb-2">
+                  <label class="form-label">Edit Selected Event</label>
+                  <div class="input-group mb-2">
+                    <input type="text" name="event_name" class="form-control" value="{{ selected_event.name }}" required>
+                    <input type="date" name="event_date" class="form-control" value="{{ selected_event.date }}" required>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-pencil-square"></i></button>
+                  </div>
+                </form>
+                <!-- Delete Event -->
+                <form method="POST" action="/delete_event/{{ selected_event.id }}" onsubmit="return confirm('Delete this event and all its attendance?');">
+                  <button type="submit" class="btn btn-danger w-100"><i class="bi bi-trash"></i> Delete Selected Event</button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form method="POST" action="/mark" class="row g-2 mb-4 align-items-center shadow-sm p-3 bg-white rounded-4" autocomplete="off">
+            <input type="hidden" name="event_id" value="{{ event_id }}">
+            <div class="col-12 position-relative">
+                <input type="hidden" id="student-id" name="student_id" required>
+                <input type="text" id="student-search" name="student_search" class="form-control form-control-lg" placeholder="Enter ID or Name" autocomplete="off" required>
+                <div id="suggestions" class="list-group position-absolute w-100 shadow-sm" style="z-index:1050;"></div>
+            </div>
+            <div class="col-12 d-grid mt-2">
+                <button type="submit" class="btn btn-primary btn-lg">Mark Present</button>
+                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#scanModal" title="Scan ID">
+                    <i class="bi bi-camera"></i>
+                </button>
+            </div>
+        </form>
+
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white text-center">
+                Students Marked Present
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for student in students %}
+                    {% if student.student_id and student.student_id in present_ids %}
+                        <li class="list-group-item">
+                            <strong>{{ student.last_name }}, {{ student.first_name }}{% if student.middle_i %} {{ student.middle_i }}.{% endif %}</strong>
+                            ({{ student.student_id }}) - {{ student.course }} {{ student.year }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {# Show present students by name only (no ID) #}
+                {% for row in present_names %}
+                    <li class="list-group-item">
+                        <strong>{{ row['last_name'] }}, {{ row['first_name'] }}{% if row['middle_i'] %} {{ row['middle_i'] }}.{% endif %}</strong>
+                        (No ID)
+                    </li>
+                {% endfor %}
+                {% if not present_ids and not present_names %}
+                    <li class="list-group-item text-muted text-center">No one marked present yet.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Camera Scan Modal -->
+    <div class="modal fade" id="scanModal" tabindex="-1" aria-labelledby="scanModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="scanModalLabel">Scan Student ID</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="stopScanner()"></button>
+          </div>
+          <div class="modal-body text-center">
+            <div id="reader" style="width:100%;"></div>
+            <div id="scan-result" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        // Prepare student data for search
+        const students = [
+            {% for student in students %}
+            {
+                id: `{{ student.student_id }}`,
+                name: `{{ student.last_name }}, {{ student.first_name }}{% if student.middle_i %} {{ student.middle_i }}.{% endif %}`,
+                course: `{{ student.course }}`,
+                year: `{{ student.year }}`
+            },
+            {% endfor %}
+        ];
+
+        const input = document.getElementById('student-search');
+        const hiddenId = document.getElementById('student-id');
+        const suggestions = document.getElementById('suggestions');
+
+        input.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            suggestions.innerHTML = '';
+            hiddenId.value = '';
+            if (value.length < 2) return;
+            const matches = students.filter(s =>
+                s.name.toLowerCase().includes(value) ||
+                s.id.toLowerCase().includes(value)
+            ).slice(0, 8);
+            matches.forEach(s => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = `${s.name} (${s.id}) - ${s.course} ${s.year}`;
+                item.onclick = () => {
+                    input.value = s.name;
+                    hiddenId.value = s.id || s.name; // fallback if id is empty
+                    suggestions.innerHTML = '';
+                };
+                suggestions.appendChild(item);
+            });
+        });
+
+        // On form submit, if no suggestion was picked, try to match manually
+        input.form.addEventListener('submit', function(e) {
+            if (!hiddenId.value) {
+                const value = input.value.toLowerCase();
+                const match = students.find(s =>
+                    s.name.toLowerCase() === value || s.id.toLowerCase() === value
+                );
+                if (match) {
+                    hiddenId.value = match.id || match.name;
+                }
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+                suggestions.innerHTML = '';
+            }
+        });
+
+        // Optional: Scroll input into view on focus (for mobile)
+        input.addEventListener('focus', function() {
+            setTimeout(() => {
+                input.scrollIntoView({behavior: "smooth", block: "center"});
+            }, 200);
+        });
+
+let html5QrcodeScanner = null;
+
+function startScanner() {
+    // Clear previous scanner if any
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().catch(() => {});
+        html5QrcodeScanner = null;
+    }
+    document.getElementById('scan-result').innerHTML = "";
+    html5QrcodeScanner = new Html5Qrcode("reader");
+    html5QrcodeScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 200 },
+        qrCodeMessage => {
+            document.getElementById('scan-result').innerHTML = "Scanned: " + qrCodeMessage;
+            markAttendance(qrCodeMessage);
+            stopScanner();
+            // Close modal after scan
+            const scanModal = bootstrap.Modal.getInstance(document.getElementById('scanModal'));
+            scanModal.hide();
+        },
+        errorMessage => {
+            // Optionally show scan errors
+        }
+    ).catch(err => {
+        document.getElementById('scan-result').innerHTML = "Camera error: " + err;
+    });
+}
+
+function stopScanner() {
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().then(() => {
+            html5QrcodeScanner.clear();
+        }).catch(() => {});
+        html5QrcodeScanner = null;
+    }
+}
+
+document.getElementById('scanModal').addEventListener('shown.bs.modal', startScanner);
+document.getElementById('scanModal').addEventListener('hidden.bs.modal', stopScanner);
+
+function markAttendance(studentId) {
+    fetch('/mark', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `student_id=${encodeURIComponent(studentId)}&event_id={{ event_id }}`
+    })
+    .then(response => response.text())
+    .then(() => {
+        location.reload();
+    });
+}
+    </script>
+</body>
+</html>

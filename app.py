@@ -148,10 +148,4 @@ def import_students_from_csv(csv_file):
     cur.close()
     conn.close()
 
-# Run Flask App
-if __name__ == '__main__':
-    import_students_from_csv('students.csv')
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-    # erve(app, host='0.0.0.0', port=4001)
-    # app.run(host='0.0.0.0', port=4001, debug=True)
+import_students_from_csv('students.csv')

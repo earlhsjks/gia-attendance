@@ -130,52 +130,8 @@ def import_students_from_csv(csv_file):
     conn.commit()
     conn.close()
 
-def init_db():
-    conn = sqlite3.connect('attendance.db')
-    c = conn.cursor()
-
-    # Create students table
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS students (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id TEXT UNIQUE,
-        first_name TEXT,
-        last_name TEXT,
-        middle_i TEXT,
-        course TEXT,
-        year TEXT
-    )
-    ''')
-
-    # Create events table
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS events (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        date TEXT NOT NULL
-    )
-    ''')
-
-    # Create attendance table
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS attendance (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        event_id INTEGER NOT NULL,
-        student_id TEXT,
-        first_name TEXT,
-        middle_i TEXT,
-        last_name TEXT,
-        FOREIGN KEY(event_id) REFERENCES events(id)
-    )
-    ''')
-
-    conn.commit()
-    conn.close()
-    print("Database upgraded for events.")
-
 # Run Flask App
 if __name__ == '__main__':
-    init_db()
     import_students_from_csv('students.csv')
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)

@@ -241,7 +241,7 @@ def download():
         for attendance, student in records:
             yield f'{student.student_id},{student.last_name},{student.first_name},{student.middle_i},{student.course},{student.year}\n'
 
-    filename = f"Attendance{event_id}.csv"
+    filename = f"Attendance {event.name}.csv"
     return Response(
         generate(),
         mimetype='text/csv',

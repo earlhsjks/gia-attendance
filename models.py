@@ -1,44 +1,28 @@
-import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 
-conn = sqlite3.connect('attendance.db')
-c = conn.cursor()
+db = SQLAlchemy()
 
-# Create students table
-c.execute('''
-CREATE TABLE IF NOT EXISTS students (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id TEXT UNIQUE,
-    first_name TEXT,
-    last_name TEXT,
-    middle_i TEXT,
-    course TEXT,
-    year TEXT
-)
-''')
+class Student(db.Model):
+    __tablename__ = 'students'
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.String(50), unique=True)
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    middle_i = db.Column(db.String(10))
+    course = db.Column(db.String(100))
+    year = db.Column(db.String(20))
 
-# Create events table
-c.execute('''
-CREATE TABLE IF NOT EXISTS events (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    date TEXT NOT NULL
-)
-''')
+class Event(db.Model):
+    __tablename__ = 'events'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    date = db.Column(db.Date, nullable=False)
 
-# Create attendance table
-c.execute('''
-CREATE TABLE IF NOT EXISTS attendance (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    event_id INTEGER NOT NULL,
-    student_id TEXT,
-    first_name TEXT,
-    middle_i TEXT,
-    last_name TEXT,
-    FOREIGN KEY(event_id) REFERENCES events(id)
-)
-''')
-
-conn.commit()
-conn.close()
-
-print("Database upgraded for events.")
+class Attendance(db.Model):
+    __tablename__ = 'attendance'
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id', ondelete="CASCADE"), nullable=False)
+    student_id = db.Column(db.String(50), db.ForeignKey('students.student_id', ondelete="SET NULL"), nullable=True)
+    first_name = db.Column(db.String(100))
+    middle_i = db.Column(db.String(10))
+    last_name = db.Column(db.String(100))

@@ -1,20 +1,23 @@
 from flask import Flask, render_template, request, redirect, jsonify
-import sqlite3, csv
+import mysql.connector
+import csv
 from waitress import serve
 from datetime import date
 import os
+from config import MYSQL_CONFIG
 
 app = Flask(__name__)
 
 def get_db():
-    conn = sqlite3.connect('attendance.db')
-    conn.row_factory = sqlite3.Row
+    conn = mysql.connector.connect(**MYSQL_CONFIG)
     return conn
 
 @app.route('/')
 def index():
     conn = get_db()
-    events = conn.execute("SELECT * FROM events ORDER BY date DESC").fetchall()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("SELECT * FROM events ORDER BY date DESC")
+    events = cur.fetchall()
     event_id = request.args.get('event_id')
     selected_event = None
     students = []
@@ -23,14 +26,19 @@ def index():
     today = date.today().isoformat()
 
     if event_id:
-        selected_event = conn.execute("SELECT * FROM events WHERE id = ?", (event_id,)).fetchone()
-        students = conn.execute("SELECT * FROM students").fetchall()
-        present = conn.execute("SELECT student_id FROM attendance WHERE event_id = ?", (event_id,)).fetchall()
+        cur.execute("SELECT * FROM events WHERE id = %s", (event_id,))
+        selected_event = cur.fetchone()
+        cur.execute("SELECT * FROM students")
+        students = cur.fetchall()
+        cur.execute("SELECT student_id FROM attendance WHERE event_id = %s", (event_id,))
+        present = cur.fetchall()
         present_ids = set([row['student_id'] for row in present if row['student_id']])
-        present_names = conn.execute(
-            "SELECT first_name, middle_i, last_name FROM attendance WHERE event_id = ? AND (student_id IS NULL OR student_id = '' OR student_id = 'None')",
+        cur.execute(
+            "SELECT first_name, middle_i, last_name FROM attendance WHERE event_id = %s AND (student_id IS NULL OR student_id = '' OR student_id = 'None')",
             (event_id,)
-        ).fetchall()
+        )
+        present_names = cur.fetchall()
+    cur.close()
     conn.close()
     return render_template(
         'index.html',
@@ -51,12 +59,14 @@ def mark():
     conn = get_db()
 
     student = None
+    cur = conn.cursor(dictionary=True)
     if student_id and student_id.lower() != "none" and student_id.strip() != "":
-        conn.execute(
-            "INSERT OR IGNORE INTO attendance (event_id, student_id) VALUES (?, ?)",
+        cur.execute(
+            "INSERT IGNORE INTO attendance (event_id, student_id) VALUES (%s, %s)",
             (event_id, student_id)
         )
-        student = conn.execute("SELECT * FROM students WHERE student_id = ?", (student_id,)).fetchone()
+        cur.execute("SELECT * FROM students WHERE student_id = %s", (student_id,))
+        student = cur.fetchone()
     else:
         full_name = request.form.get('student_search', '').strip()
         last_name, rest = full_name.split(',', 1) if ',' in full_name else (full_name, '')
@@ -64,13 +74,13 @@ def mark():
         parts = rest.split(' ')
         first_name = parts[0] if len(parts) > 0 else ''
         middle_i = parts[1].replace('.', '').strip() if len(parts) > 1 else ''
-        conn.execute(
-            "INSERT OR IGNORE INTO attendance (event_id, first_name, middle_i, last_name) VALUES (?, ?, ?, ?)",
+        cur.execute(
+            "INSERT IGNORE INTO attendance (event_id, first_name, middle_i, last_name) VALUES (%s, %s, %s, %s)",
             (event_id, first_name.strip(), middle_i, last_name.strip())
         )
         student = {'first_name': first_name.strip(), 'middle_i': middle_i, 'last_name': last_name.strip(), 'student_id': None, 'course': '', 'year': ''}
-
     conn.commit()
+    cur.close()
     conn.close()
 
     if ajax:
@@ -114,33 +124,28 @@ def edit_event(event_id):
     return redirect(f"/?event_id={event_id}")
 
 def import_students_from_csv(csv_file):
-    conn = sqlite3.connect('attendance.db')
+    conn = get_db()
     cur = conn.cursor()
-
-    # Delete all existing student records
     cur.execute('DELETE FROM students')
-    # Reset the auto-increment counter for the students table
-    cur.execute('DELETE FROM sqlite_sequence WHERE name="students"')
-
-    # Use latin-1 encoding to handle special characters
+    cur.execute('ALTER TABLE students AUTO_INCREMENT = 1')
     with open(csv_file, newline='', encoding='latin-1') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            student_id = row['student_id'].strip() or None  # Convert blank to None/NULL
+            student_id = row['student_id'].strip() or None
             cur.execute('''
-                INSERT OR IGNORE INTO students 
+                INSERT IGNORE INTO students 
                 (student_id, last_name, first_name, middle_i, course, year)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s)
             ''', (
                 student_id,
-                row['first_name'],
                 row['last_name'],
+                row['first_name'],
                 row['middle_i'],
                 row['course'],
                 row['year']
             ))
-
     conn.commit()
+    cur.close()
     conn.close()
 
 # Run Flask App

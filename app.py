@@ -186,8 +186,8 @@ def import_students_from_csv(csv_file):
             student_id = row['student_id'].strip() or None
             student = Student(
                 student_id=student_id,
-                last_name=row['last_name'],
-                first_name=row['first_name'],
+                last_name=row['first_name'],
+                first_name=row['last_name'],
                 middle_i=row['middle_i'],
                 course=row['course'],
                 year=row['year']

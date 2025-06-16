@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import sqlite3, csv
 from waitress import serve
 from datetime import date
+import os
 
 app = Flask(__name__)
 
@@ -46,30 +47,42 @@ def index():
 def mark():
     student_id = request.form['student_id']
     event_id = request.form['event_id']
+    ajax = request.form.get('ajax')
     conn = get_db()
 
+    student = None
     if student_id and student_id.lower() != "none" and student_id.strip() != "":
         conn.execute(
             "INSERT OR IGNORE INTO attendance (event_id, student_id) VALUES (?, ?)",
             (event_id, student_id)
         )
+        student = conn.execute("SELECT * FROM students WHERE student_id = ?", (student_id,)).fetchone()
     else:
         full_name = request.form.get('student_search', '').strip()
         last_name, rest = full_name.split(',', 1) if ',' in full_name else (full_name, '')
         rest = rest.strip()
         parts = rest.split(' ')
         first_name = parts[0] if len(parts) > 0 else ''
-        middle_i = ''
-        if len(parts) > 1:
-            middle_i = parts[1].replace('.', '').strip()
+        middle_i = parts[1].replace('.', '').strip() if len(parts) > 1 else ''
         conn.execute(
             "INSERT OR IGNORE INTO attendance (event_id, first_name, middle_i, last_name) VALUES (?, ?, ?, ?)",
             (event_id, first_name.strip(), middle_i, last_name.strip())
         )
+        student = {'first_name': first_name.strip(), 'middle_i': middle_i, 'last_name': last_name.strip(), 'student_id': None, 'course': '', 'year': ''}
 
     conn.commit()
     conn.close()
-    return redirect(f"/?event_id={event_id}")
+
+    if ajax:
+        if student:
+            # If student is a Row object, convert to dict
+            if not isinstance(student, dict):
+                student = dict(student)
+            return jsonify(success=True, student=student)
+        else:
+            return jsonify(success=False)
+    else:
+        return redirect(f"/?event_id={event_id}")
 
 @app.route('/create_event', methods=['POST'])
 def create_event():

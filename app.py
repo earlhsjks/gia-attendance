@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, flash, session, url_for
+from flask import Flask, render_template, request, redirect, jsonify, flash, session, url_for, Response
 from datetime import date
 from models import db, Event, Student, Attendance
 import csv
@@ -30,6 +30,26 @@ def login_required(f):
         session['last_active'] = now
         return f(*args, **kwargs)
     return decorated_function
+
+from flask import render_template
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        pin = request.form.get('pin')
+        if pin == LOGIN_PIN:
+            session['logged_in'] = True
+            session['last_active'] = time.time()
+            return redirect(url_for('index'))
+        else:
+            error = "Invalid PIN"
+    return render_template('auth.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/')
 @login_required
@@ -178,7 +198,6 @@ def import_students_from_csv(csv_file):
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_students_csv():
-    # Optional: Add simple IP or password check here for extra security
     if request.method == 'POST':
         if 'csv_file' not in request.files:
             flash('No file part')
@@ -188,46 +207,50 @@ def upload_students_csv():
             flash('No selected file')
             return redirect(request.url)
         if file:
-            # Save to a temp file and import
             filepath = 'uploaded_students.csv'
             file.save(filepath)
             import_students_from_csv(filepath)
             flash('Students imported successfully!')
-            return redirect('/')
-    return '''
-    <!doctype html>
-    <title>Upload Students CSV</title>
-    <h1>Upload Students CSV</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=csv_file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+            return redirect('/upload')
+    return render_template('upload.html')
 
-# In your app.py
-from flask import render_template
+@app.route('/download')
+@login_required
+def download():
+    event_id = request.args.get('event_id')
+    if not event_id:
+        # Show event selection page
+        events = Event.query.order_by(Event.date.desc()).all()
+        return render_template('download.html', events=events)
+    if not event_id.isdigit():
+        return "Invalid event ID", 400
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        pin = request.form.get('pin')
-        if pin == LOGIN_PIN:
-            session['logged_in'] = True
-            session['last_active'] = time.time()
-            return redirect(url_for('index'))
-        else:
-            error = "Invalid PIN"
-    return render_template('auth.html', error=error)
+    event = Event.query.get(int(event_id))
+    if not event:
+        return "Event not found", 404
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
+    records = (
+        db.session.query(Attendance, Student)
+        .join(Student, Attendance.student_id == Student.student_id)
+        .filter(Attendance.event_id == event_id)
+        .all()
+    )
+
+    def generate():
+        yield 'Student ID,Last Name,First Name,Middle Initial,Course,Year\n'
+        for attendance, student in records:
+            yield f'{student.student_id},{student.last_name},{student.first_name},{student.middle_i},{student.course},{student.year}\n'
+
+    filename = f"Attendance{event_id}.csv"
+    return Response(
+        generate(),
+        mimetype='text/csv',
+        headers={"Content-Disposition": f"attachment;filename={filename}"}
+    )
 
 # Uncomment to import students on startup
 # with app.app_context():
 #     db.create_all()
 
-# if __name__ == '__main__':
-#     app.run(debug=False, port= 5001)
+if __name__ == '__main__':
+    app.run(debug=False)

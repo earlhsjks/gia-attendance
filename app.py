@@ -130,8 +130,21 @@ def import_students_from_csv(csv_file):
     conn.commit()
     conn.close()
 
+    def init_db():
+        conn = sqlite3.connect('events.db')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                date TEXT NOT NULL
+            )
+        ''')
+        conn.commit()
+        conn.close()
+
 # Run Flask App
 if __name__ == '__main__':
+    init_db()
     import_students_from_csv('students.csv')
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)

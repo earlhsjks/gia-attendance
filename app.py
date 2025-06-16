@@ -132,6 +132,10 @@ def edit_event(event_id):
     return redirect(f"/?event_id={event_id}")
 
 def import_students_from_csv(csv_file):
+    # First, delete all attendance records
+    Attendance.query.delete()
+    db.session.commit()
+    # Now, delete all students
     Student.query.delete()
     db.session.execute(text('ALTER TABLE students AUTO_INCREMENT = 1'))
     with open(csv_file, newline='', encoding='latin-1') as file:
@@ -153,3 +157,11 @@ def import_students_from_csv(csv_file):
 with app.app_context():
     # db.create_all()
     import_students_from_csv('students.csv')
+
+# Uncomment to import students on startup
+with app.app_context():
+    # db.create_all()
+    import_students_from_csv('students.csv')
+
+# if __name__ == '__main__':
+#     app.run(debug=False, port= 5001)

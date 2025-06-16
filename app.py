@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, flash
 from datetime import date
 from models import db, Event, Student, Attendance
 import csv
@@ -7,6 +7,7 @@ from sqlalchemy import text
 from models import db, Event, Student, Attendance
 
 app = Flask(__name__)
+app.secret_key = '81a6u3xft47odubrf431sqcg2wfeqnlbfh0nh1yucg'
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 db.init_app(app)
@@ -132,10 +133,7 @@ def edit_event(event_id):
     return redirect(f"/?event_id={event_id}")
 
 def import_students_from_csv(csv_file):
-    # First, delete all attendance records
-    Attendance.query.delete()
-    db.session.commit()
-    # Now, delete all students
+    # Only delete students, not attendance
     Student.query.delete()
     db.session.execute(text('ALTER TABLE students AUTO_INCREMENT = 1'))
     with open(csv_file, newline='', encoding='latin-1') as file:
@@ -153,15 +151,37 @@ def import_students_from_csv(csv_file):
             db.session.add(student)
     db.session.commit()
 
-# Uncomment to import students on startup
-with app.app_context():
-    # db.create_all()
-    import_students_from_csv('students.csv')
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_students_csv():
+    # Optional: Add simple IP or password check here for extra security
+    if request.method == 'POST':
+        if 'csv_file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['csv_file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file:
+            # Save to a temp file and import
+            filepath = 'uploaded_students.csv'
+            file.save(filepath)
+            import_students_from_csv(filepath)
+            flash('Students imported successfully!')
+            return redirect('/upload')
+    return '''
+    <!doctype html>
+    <title>Upload Students CSV</title>
+    <h1>Upload Students CSV</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=csv_file>
+      <input type=submit value=Upload>
+    </form>
+    '''
 
 # Uncomment to import students on startup
-with app.app_context():
-    # db.create_all()
-    import_students_from_csv('students.csv')
+# with app.app_context():
+#     db.create_all()
 
 # if __name__ == '__main__':
 #     app.run(debug=False, port= 5001)

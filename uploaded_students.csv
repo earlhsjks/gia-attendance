@@ -1,0 +1,214 @@
+student_id,first_name,last_name,middle_i,course,year
+,Aguilar,Keru Rey,S,BS ARCH,1
+,Aguilar,Florie Mae,A,BSBA FM,2
+,Aguirre,Kristine,R,BA Psyc,1
+,Alacayan,Stephanie,J,BSBA HRDM ,3
+,Alfante,Darius Bryan,A,BS BIO,2
+,Ali,Bai Anthea Mae,A,BSIT,1
+,Alipo-on,Bea,J,BSA,1
+,Allaga,Aron Ember,B,BA PSYCH,1
+,Almodiente,Mark Dave,E,BSBA FM,2
+,Almodiente,Ian Mark,P,BA Pol Sci,2
+,Andrada,Joyce Mariel,S,BA Psych,1
+,Angos,Marife,,BSED-ENGL,4
+,Aquino,John Paul,V.,BSBA MM,3
+,Araneta,Ashley,O,BSSW,1
+,Arco,April Joy,S,AB Psych,3
+,Ardales,Shyra,A,BS BIO,2
+,Arrieta,Gerian Claire,P,BSBA HRDM,2
+,Bajenting,Vincent,M,BSSW,1
+,Baliton,Fernan,P,BSBA FM,2
+,Balome,Gabrielle,L,BSED Sci,2
+,Banares,Barbie,,BPED,2
+,Batobalani,Lance Isidore,P,BSBA,2
+,Bautista,Franceilyn Queen,,AB Pol Sci ,3
+,Bautista,Melgen Alfred,C,BSBA MM,2
+,Belgira,Nichelle,F,BA Pol ci,1
+,Benedicto,Sharlene,O,BSSW,1
+,Bergado,Nena Angelie,F,BSED SS,1
+,Besonia,Axel Rose,C,BSSW,1
+,Billones,Glyzel,S,BEED,3
+,Bluyan,Yvoney ,B,BA Pol. Sci,2
+,Boctil,Angeline,A,BA PSYCH,3
+,Buhian,Richard Jr.,P.,BSMA,3
+,Buno-an,Jhan Denver,E,BS CRIM,1
+,Cabanog,Lhea Mae,A,BSBA FM,1
+,Cabuslay,Sheryl Joy,M,BSED ENG,4
+,Caminos,Angel Nicole,E,BSBA MM,2
+,Camota,Kyla,J.,BSBA MM,2
+,Campomanes,Aica,P,BLIS,3
+,Cariaga,Kris Laurence,P,BSCE,1
+,Carillo,Lyccah,T,BSCE,2
+,Caro,Haelen Kie,G,BLIS,3
+,Carreon,Khryz Ervon,L,BSIT,3
+,Casicas,Angel Marie,,BSA,2
+,Castro,Lovelyn Jane,D,BSSW,2
+,Catubay,Kimi Rukko,E,BS Crim,3
+,Celmar,Marchill,M,BA PHILO,3
+,Celmar,Marchill,,AB Philo,3
+,Cocjin,Kevin Troy,c,BSBA HRDM,1
+,Cuevas,Anne Carvee,E,AB Psych,2
+,Dagno,Princess Izzy,T,BLIS,3
+,Dawang,Mariel,T,BSBIO,2
+,Dela Cruz,Jezer Glenn,L,BA PSYCH,2
+,Dela Cruz,Honey Grace,C,BSED Math,2
+,Dela Pena,Zaira Anthoneth,M,BA Pol. Sci,1
+,Delgado,Joshua,G,BA PSYCH,1
+,Delideli,Jeffrey,G,BSBA FM,3
+,Depra,Prince Marcintte,M,BSA,1
+,Dequilla,Dea Jones ,D,AB POL SCI,1
+,Dereza,Rechshie,C,BA PSYCH,2
+,Diaz,April Gabe,E,BA Pol. Sci,2
+,Dondiego,Apple Nico   ,A,BSIT,3
+,Dondoyano,Jasther Joseph,P,BPED,2
+,Elarcosa,Andrea Mae,A,BA PSYCH,1
+,Elecerio,Trisha,S,BSBA FM,2
+,Escarlote,Adrian,A,BSCE,3
+,Escosura,Ivan ,M,BSBA FM,2
+,Escuadro,Pauline Joy,D,BA PSYCH,1
+,Esquera,Ge-an,C,BEED,3
+,Esteves,Realyn,B.,BEED,2
+,Estrella,Kate,D,BSCE,2
+,Evangelio,Precious Joy,R,AB POL SCI,3
+,Fagtanan,Danica Gwen,C,AB POL SCI,3
+,Fedalgo,Lebert,C,BSHM,1
+,Felitro,Krystel Ann,L,BSSW,1
+,Fernandez,Kent Elren,P,BSIT,3
+,Flores,Jolina,V,BSBA FM ,2
+,Forro,Cjay,P,BPED,2
+,Fresco,John Loyd,B.,AB Pol Sci,2
+,Fronda,Love,B,BSBA HRDM,3
+,Fuentes,Kurt Ashley,R,BSBA FM ,2
+,Fulgencio,Ice,A,BSHM,2
+,Galanaga,Donna Lea,L,BEED,3
+,Galande,Trisha Nicole,O,BS PSYCH,4
+,Gallego,Mitch Abigail,T,BSED MATH,1
+,Gandola,Charles Adrian,-,BSBA FM,1
+2024998,Garcia,Earl Jeno,M,BSIT,1
+2024999,Garma,Norbert John,F,BSSW,1
+,Genovia,John Rogie,B,BSECE,1
+,Gregorio,Vince Philip,L,BSIT,1
+,Gulmatico,Darne Babelle,A,BSA,2
+,Gurit,Glydil,B,BSBA FM,2
+,Hagoriles,Spencer Jones,B.,BSBA FM,2
+,Hernaez,Rohana,Y,BSBA FM,1
+,Honrada,Jasmine Kate,S,BSBA FM,2
+,Ignoro,Lyniel,B,BSED MATH,1
+,Ilagan,Christian  Erick,R,BSCE,4
+,Javellana,Bryan Jay,N,BSCE,1
+,Jison,Mary Jay,M,AB Po. Sci,2
+,Joquino,Kyrstel Shaine,S,BA PSYCH,1
+,Juanitas,John Paul,B,BSBA MM,1
+,Junio,Celine Joy,C,BSED Engl,2
+,Laano,Clarence Carl,E,AB Psych,2
+,Labadia,Regine,G,BSED ENG ,3
+,Labastida,Micahel Angelo,A,BSCE,1
+,Lagulay,Xyra Rose,M,BSBA FM ,3
+,Lamera,Liezli Joy,L,BS Arch,1
+,Lapatar,Stanley Jones,B,BSIT,2
+,Lapurga,Junnel,J,BSBA MM,3
+,Lee,Karl  Angelo,L,AB Psych ,3
+,Libunao,Daniel,A,BSIT,2
+,Lorilla,Kate Ashley,L,BS HM,2
+,Losaria,Krister Dhane,B,BSBA MM,2
+,Luna,Christian Darwin,B,BSBA MM,1
+,Macalde,Sofia Cassandra,B.,BLIS,2
+,Macaraeg,Beyonce Bree,A,BSSW,1
+,Magluyan,Zhandy Gale,T,BSMA,2
+,Magquilat,Josue III,L,AB Philo,3
+,Magtanong,Mardeca Julia,-,BSMA,1
+,Mahinay,Aldred,D,BPED,1
+,Mallon,Chalice,M,BPED,2
+,Mamac,Edcel,M,BSIT,2
+,Mamangkiang,Bernard,B,BSCE,3
+,Manalili,Fatima,S,BA PSYH,2
+,Mandadero,Carlo,C,BSHM,2
+,Manejero,Anthony,,BSED ENG,3
+,Manlapao,Shynmae,F,BSSW,1
+,Mayang,Reign Arielle,T,BSED ENGL,3
+,Mendoza,Johanah Madel,I,BA Psyc,1
+,Mendoza,Blademer Fate,-,BSED Math,1
+,Mermal,Kaye,C,BSBA FM ,4
+,Miguel,Harvey Stuart,M,AB Psyc,2
+,Montana ,Jory,F,BSED FIL,2
+,Montero,Donna Mae,C,BSBA FM,2
+,Monterola,Francin Jay,C,ABPol. Sci,2
+,Moral,Lymae,R,AB Comm,2
+,Morte,Jessa Mae,T,BSIT,2
+,Mortejo,Kaye Izabelle,A,BPED,1
+,Mucho,Grace Sandra,M,BSMA,1
+,Narbonito,Conrado Jr.,O,BS CRIM,2
+,Naval,Earl James,B,BA PSYCH,2
+,Naval,Jaden Darl,J,BA PSYCH,1
+,Negros,Johnrich,M,BA PHILO,1
+,Nietes,Kurt Justin,G,BS CpE,1
+,Nufable,Samuel,D,AB COMM,3
+,Obligar,Princess Faith,A,BSBA FM,1
+,Odio,Bench Ivan,S,BPED,3
+,Olingay,Micah Grace,P,BSED FiI.,1
+,Ontanillas,Arian Loi Jr.,O,AB POL. SCI,3
+,Oro,Katherine,C,BSBA MM,2
+,Padama,Reshane,G,BSBA MM,3
+,Pagulong ,Rolando III,E,BSA,1
+,Palabrica,Vana Faith,,BSBA FM,1
+,Palencia,Xyrxylle Alenn,T,BPED,1
+,Palomares,Nathalie,G,BSBA FM,1
+,Panaguiton,Shakira-Julia,J,BA Psych,1
+,Pandat,Gwyneth Kylah,M,BEED,3
+,Pandian,Kristen,C,AB Psyc,3
+,Panes,Divine,M,BLIS,1
+,Pantua,Angel Jome,G,BSBS FM,3
+,Parre�o,Annie Jane,A,AB Pol. Sci ,1
+,Parro,Nathan Jon,T,BA PSYCH,1
+,Patches,Mary Joy,C,BLIS,3
+,Pavillon,Therese Queen,A,BS Bio,2
+,Penuelo,Divine Grace,I,AB Psych,3
+,Pialogo,Claire Joy,-,BSBA MM,2
+,Placido,Cyr Kent,-,BSEE,2
+,Plakay,Ruby Amor,M,BSBA FM,3
+,Pula,George Benedict,P,BSIT,2
+,Ramos,Apple Ann,S.,BLIS,2
+,Rendon,Justine Dave,L,BSED ENGL,4
+,Rendon,Lea Nica,L,BSSW,1
+,Ricafrente,Khent Francis,V,BPED,2
+,Rivera,Rio Mark,M,BA POL SCI,1
+,Rivera,Airalyn,,BSBA MM,2
+,Rizaldo,April Mae,T,BPED,2
+,Sabang,Christian,,BS Criminology,1
+,Sabang,Ma. Carmela,,BS Crim,4
+,Sabio,Frank,L,BA POL SCI,1
+,Sales,Hannalyn Grace,G,AB Pol Sci ,2
+,Samonte,Jehan Mae,D,BSCE,2
+,Sangalang,Daniela Sofeia,S,BSCS,1
+,Sanopao,John Stephen,B,BSA,1
+,Sasota,Keithley Anne,L,AB Psyc,3
+,Se�erez,Zyron Jade,L,BSCE,2
+,Servanez,Rechel Mae,D,BSBA FM,4
+,Sibug,Prince Charles,E,BSIT,2
+,Sinco,Jerry JR.,P,BS CRIM,4
+,Sinco,John Erik,P,BSBA MM,2
+,Singson,Sheryn Diane,M,BLIS,1
+,Siodora,Kiel Adrian,-,BS HM,2
+,Sison,Avegail,T,BSSW,2
+,Sitier,Rachel,R,BSBA FM,4
+,Sobrevega,Kenjy,L,BSIT,1
+,Sombrea,Nicole,A,BPED,1
+,Sood,Johary,C,BSBA MM,2
+,Soriano,Jeorge Justine,,BSBA FM,3
+,Surita,Normay Kim Alec,C,BLIS,2
+,Taborada,Michael John,L,BLIS ,3
+,Tacal,Nick Clarence,M,BSCE,1
+,Teano,Russel,,BPED,3
+,Togonon ,Stephanie,B,AB Pol Sci,3
+,Toledo ,May,P,BA Psyc,1
+,Tupas,Daner Junz,B.,BSCE,2
+,Unggad,Jhodrich,S,BA Pol. Sci,2
+,Vallente,Junette,G,AB PSYCH,2
+,Viejo,Kea Justine,C,BSIT,1
+,Villafranca,Herman Jhon,M,BSEE,2
+,Villanueva,Angela Kate,A,AB PSYC,3
+,Villanueva,Ray Joy,C,BSIT,2
+,Villaruel,Christian Jade,D,BSIT,1
+,Yadao,Ralph Lauren,A,BS Arch,1
+,Zacarias,Denisse Ysabelle,A,BA PHILO,1
+,Zuyco,Mary Jizelle,S,BA PSYCH ,2

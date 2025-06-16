@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+    min-height: 100vh;
+}
+.main-header {
+    background: #1e293b;
+    color: #fff;
+    padding: 2rem 0 1rem 0;
+    border-radius: 0 0 1.5rem 1.5rem;
+    box-shadow: 0 4px 16px rgba(30,41,59,0.08);
+}
+.main-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    letter-spacing: 2px;
+}
+.main-header h2 {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #cbd5e1;
+    letter-spacing: 1px;
+}
+.card {
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px rgba(30,41,59,0.06);
+}
+.card-header {
+    border-radius: 1rem 1rem 0 0;
+}
+.btn-primary, .btn-success, .btn-warning, .btn-danger {
+    border-radius: 2rem;
+}
+.form-control-lg {
+    border-radius: 1.5rem;
+}
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+}
+.list-group-item:last-child {
+    border-bottom: none;
+}
+.modal-content {
+    border-radius: 1rem;
+}

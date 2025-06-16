@@ -2,3 +2,4 @@ flask
 pandas
 waitress
 gunicorn
+mysql-connector-python

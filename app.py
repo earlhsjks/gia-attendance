@@ -168,7 +168,7 @@ def upload_students_csv():
             file.save(filepath)
             import_students_from_csv(filepath)
             flash('Students imported successfully!')
-            return redirect('/upload')
+            return redirect('/')
     return '''
     <!doctype html>
     <title>Upload Students CSV</title>

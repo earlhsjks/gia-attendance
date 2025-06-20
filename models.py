@@ -14,9 +14,9 @@ class Student(db.Model):
     student_id = db.Column(db.String(255), unique=True)
     last_name = db.Column(db.String(255))
     first_name = db.Column(db.String(255))
-    middle_i = db.Column(db.String(10))
-    course = db.Column(db.String(255))
-    year = db.Column(db.String(10))
+    middle_i = db.Column(db.String(10), nullable=True)
+    course = db.Column(db.String(255), nullable=True)
+    year = db.Column(db.String(10), nullable=True)
 
 class Attendance(db.Model):
     __tablename__ = 'attendance'

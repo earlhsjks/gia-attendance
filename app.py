@@ -128,7 +128,6 @@ def mark():
         db.session.add(attendance)
         db.session.commit()
         student = {'first_name': first_name.strip(), 'middle_i': middle_i, 'last_name': last_name.strip(), 'student_id': None, 'course': '', 'year': ''}
-
     if ajax:
         if student:
             if not isinstance(student, dict):
@@ -186,8 +185,8 @@ def import_students_from_csv(csv_file):
             student_id = row['student_id'].strip() or None
             student = Student(
                 student_id=student_id,
-                last_name=row['first_name'],
-                first_name=row['last_name'],
+                last_name=row['last_name'],
+                first_name=row['first_name'],
                 middle_i=row['middle_i'],
                 course=row['course'],
                 year=row['year']
@@ -211,7 +210,7 @@ def upload_students_csv():
             file.save(filepath)
             import_students_from_csv(filepath)
             flash('Students imported successfully!')
-            return redirect('/')
+            return redirect('/upload')
     return render_template('upload.html')
 
 @app.route('/download')
@@ -248,9 +247,8 @@ def download():
         headers={"Content-Disposition": f"attachment;filename={filename}"}
     )
 
-# Uncomment to import students on startup
 # with app.app_context():
 #     db.create_all()
 
-if __name__ == '__main__':
-    app.run(debug=False)
+# if __name__ == '__main__':
+#     app.run(debug=False)

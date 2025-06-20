@@ -176,20 +176,39 @@ def edit_event(event_id):
     return redirect(f"/?event_id={event_id}")
 
 def import_students_from_csv(csv_file):
-    # Only delete students, not attendance
-    Student.query.delete()
-    db.session.execute(text('ALTER TABLE students AUTO_INCREMENT = 1'))
+    # Step 1: Read all student_ids from the new CSV
     with open(csv_file, newline='', encoding='latin-1') as file:
         reader = csv.DictReader(file)
+        new_student_ids = set()
+        rows = []
         for row in reader:
-            student_id = row['student_id'].strip() or None
+            student_id = row['student_id'].strip()
+            if student_id:
+                new_student_ids.add(student_id)
+                rows.append(row)
+
+    # Step 2: Delete attendance for students NOT in the new list
+    Attendance.query.filter(~Attendance.student_id.in_(new_student_ids)).delete(synchronize_session=False)
+    db.session.commit()
+
+    # Step 3: Update/add students
+    for row in rows:
+        student_id = row['student_id'].strip()
+        student = Student.query.filter_by(student_id=student_id).first()
+        if student:
+            student.first_name = row['first_name'].strip()
+            student.last_name = row['last_name'].strip()
+            student.middle_i = row.get('middle_i', '').strip()
+            student.course = row.get('course', '').strip()
+            student.year = row.get('year', '').strip()
+        else:
             student = Student(
                 student_id=student_id,
-                last_name=row['last_name'],
-                first_name=row['first_name'],
-                middle_i=row['middle_i'],
-                course=row['course'],
-                year=row['year']
+                first_name=row['first_name'].strip(),
+                last_name=row['last_name'].strip(),
+                middle_i=row.get('middle_i', '').strip(),
+                course=row.get('course', '').strip(),
+                year=row.get('year', '').strip()
             )
             db.session.add(student)
     db.session.commit()

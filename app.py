@@ -204,8 +204,8 @@ def import_students_from_csv(csv_file):
         else:
             student = Student(
                 student_id=student_id,
-                first_name=row['first_name'].strip(),
                 last_name=row['last_name'].strip(),
+                first_name=row['first_name'].strip(),
                 middle_i=row.get('middle_i', '').strip(),
                 course=row.get('course', '').strip(),
                 year=row.get('year', '').strip()

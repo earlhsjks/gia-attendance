@@ -191,7 +191,11 @@ def import_students_from_csv(csv_file):
     Attendance.query.filter(~Attendance.student_id.in_(new_student_ids)).delete(synchronize_session=False)
     db.session.commit()
 
-    # Step 3: Update/add students
+    # Step 3: Delete students NOT in the new list
+    Student.query.filter(~Student.student_id.in_(new_student_ids)).delete(synchronize_session=False)
+    db.session.commit()
+
+    # Step 4: Update/add students from the new list
     for row in rows:
         student_id = row['student_id'].strip()
         student = Student.query.filter_by(student_id=student_id).first()
@@ -204,8 +208,8 @@ def import_students_from_csv(csv_file):
         else:
             student = Student(
                 student_id=student_id,
-                last_name=row['last_name'].strip(),
                 first_name=row['first_name'].strip(),
+                last_name=row['last_name'].strip(),
                 middle_i=row.get('middle_i', '').strip(),
                 course=row.get('course', '').strip(),
                 year=row.get('year', '').strip()
@@ -266,8 +270,8 @@ def download():
         headers={"Content-Disposition": f"attachment;filename={filename}"}
     )
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
-# if __name__ == '__main__':
-#     app.run(debug=False)
+if __name__ == '__main__':
+    app.run(debug=False)
